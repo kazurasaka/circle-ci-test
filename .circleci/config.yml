@@ -10,15 +10,15 @@ commands:
     steps:
       - restore_cache:
           name: Restore npm dependencies
-          key: npm-{{ checksum "package.jsoon" }}
+          key: npm-{{ checksum "package.json" }}
 
   save_npm:
     steps:
       - save_cache:
-        name: Cache npm dependencies
-        key: npm-{{ checksum "package.jsoon" }}
-        paths:
-          - ~/workspace/node_modules
+          name: Cache npm dependencies
+          key: npm-{{ checksum "package.json" }}
+          paths:
+            - ~/workspace/node_modules
 
 jobs:
   setup:
@@ -28,7 +28,7 @@ jobs:
       - checkout
       - run:
           name: Install dependencies
-          command: npm Install
+          command: npm install
       - save_npm
 
   lint:
@@ -37,7 +37,7 @@ jobs:
     steps:
       - checkout
       - restore_npm
-      - run:
+      - run: 
           name: Lint
           command: npm run lint
       - save_npm
@@ -48,7 +48,7 @@ jobs:
     steps:
       - checkout
       - restore_npm
-      - run:
+      - run: 
           name: Build
           command: npm run build
       - save_npm
@@ -59,7 +59,7 @@ jobs:
     steps:
       - checkout
       - restore_npm
-      - run:
+      - run: 
           name: Test
           command: npm run test:unit
       - save_npm
@@ -69,19 +69,11 @@ workflows:
     jobs:
       - setup
       - lint:
-          requitres:
+          requires:
             - setup
       - build:
-          requitres:
+          requires:
             - lint
       - test:
-          requitres:
+          requires:
             - build
-
-
-
-
-
-
-
-
